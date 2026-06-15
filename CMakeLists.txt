@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : Top-level CMake project file, do global configuration
 # and include sub-projects here.
 #
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.20)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -13,3 +13,7 @@ project ("minesweeper")
 
 # Include sub-projects.
 add_subdirectory ("minesweeper")
+add_subdirectory (external/SDL3)
+
+set(SDLIMAGE_AVIF OFF CACHE BOOL "" FORCE)
+add_subdirectory (external/SDL_image)
