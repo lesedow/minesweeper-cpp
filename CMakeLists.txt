@@ -17,3 +17,4 @@ add_subdirectory (external/SDL3)
 
 set(SDLIMAGE_AVIF OFF CACHE BOOL "" FORCE)
 add_subdirectory (external/SDL_image)
+add_subdirectory (external/SDL3_ttf)

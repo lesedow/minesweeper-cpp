@@ -17,7 +17,7 @@ bool Sprites::Initialize(std::string path, SDL_Renderer* renderer) {
     return true;
 }
 
-SDL_FRect& Sprites::GetSprite(CellVisual visual)
+SDL_FRect& Sprites::GetSprite(int index)
 {
-    return sprites[visual];
+    return sprites.at(index);
 }

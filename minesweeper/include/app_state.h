@@ -16,17 +16,21 @@ enum State
 
 struct AppState
 {
-    SDL_Window* window = nullptr;
-    SDL_Renderer* renderer = nullptr;
+    SDL_Window* window{ nullptr };
+    SDL_Renderer* renderer{ nullptr };
 
-    State gameState = State::MENU;
-    Sprites gameSprites;
-    Board gameBoard;
+    State gameState{ State::MENU };
+    Sprites gameSprites{};
+    Board gameBoard{};
 
     void RenderBoard();
+    void RenderMenu();
 
     void CleanUp();
     SDL_AppResult Init();
     SDL_AppResult Iterate();
+
     SDL_AppResult Event(SDL_Event* event);
+    void HandleGameEvents(SDL_Event* event);
+    void HandleMenuEvents(SDL_Event* event);
 };

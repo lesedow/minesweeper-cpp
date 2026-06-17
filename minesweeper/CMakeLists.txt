@@ -3,7 +3,7 @@
 #
 
 # Add source to this project's executable.
-add_executable (minesweeper "minesweeper.cpp" "minesweeper.h")
+add_executable (minesweeper WIN32 "minesweeper.cpp" "minesweeper.h")
 
 target_sources(minesweeper PRIVATE 
 	src/app_state.cpp
@@ -16,6 +16,7 @@ target_include_directories (minesweeper PRIVATE include)
 
 target_link_libraries (minesweeper PRIVATE SDL3::SDL3)
 target_link_libraries (minesweeper PRIVATE SDL3_image::SDL3_image)
+target_link_libraries (minesweeper PRIVATE SDL3_ttf::SDL3_ttf)
 
 set_property (TARGET minesweeper PROPERTY CXX_STANDARD 23)
 
@@ -23,11 +24,12 @@ add_custom_command(TARGET minesweeper POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 	$<TARGET_FILE:SDL3::SDL3>
 	$<TARGET_FILE:SDL3_image::SDL3_image>
+	$<TARGET_FILE:SDL3_ttf::SDL3_ttf>
 	$<TARGET_FILE_DIR:minesweeper>
 )
 
 add_custom_command(TARGET minesweeper POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_directory
+	COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
 	${CMAKE_CURRENT_SOURCE_DIR}/assets
 	$<TARGET_FILE_DIR:minesweeper>/assets
 )

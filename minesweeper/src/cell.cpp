@@ -13,7 +13,6 @@ bool Cell::IsRevealableBomb()
 void Cell::ConvertToMine()
 {
     isBomb = true;
-    visual = CellVisual::MINE_CELL;
 }
 
 bool Cell::ToggleFlag()

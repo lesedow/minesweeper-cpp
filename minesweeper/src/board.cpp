@@ -1,5 +1,10 @@
 #include <board.h>
 
+#include <ranges>
+
+using namespace std::ranges;
+using namespace std::ranges::views;
+
 Cell& Board::GetCell(int index)
 {
     return board.at(index);
@@ -65,11 +70,7 @@ void Board::RevealCell(int pressedCellIndex)
         for (auto index : revealableCellsIndexes) RevealCell(index);
     }
 
-    if (target.isBomb) {
-        target.visual = CellVisual::HIGHLIGHTED_MINE_CELL;
-        RevealBombs();
-        return;
-    }
+    if (target.isBomb) RevealBombs();
 
     if (target.adjacentNeighbours == 0 && !target.isBomb) {
         RecursiveFill(pressedCellIndex);
@@ -101,10 +102,6 @@ void Board::CountCells()
                 if (GetCell(nextCellIndex).isBomb)
                     cell.adjacentNeighbours++;
             }
-        }
-
-        if (cell.adjacentNeighbours > 0) {
-            cell.visual = numbersVisuals[cell.adjacentNeighbours - 1];
         }
 
     }

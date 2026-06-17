@@ -9,25 +9,16 @@ enum CellState
 
 enum CellVisual
 {
-    FLAG_CELL,
-    HIDDEN_CELL,
-    EMPTY_CELL,
-    MINE_CELL,
-    HIGHLIGHTED_MINE_CELL,
-    ONE_CELL,
-    TWO_CELL,
-    THREE_CELL,
-    FOUR_CELL,
-    FIVE_CELL,
-    SIX_CELL,
-    SEVEN_CELL,
-    EIGHT_CELL
+    HIDDEN_CELL = 0,
+    EMPTY = 1,
+    FLAG = 2,
+    BOMB = 5,
+    PRESSED_BOMB = 6
 };
 
 struct Cell
 {
     CellState state = CellState::HIDDEN;
-    CellVisual visual = CellVisual::EMPTY_CELL;
     int adjacentNeighbours = 0;
     bool isBomb = false;
 
