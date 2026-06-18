@@ -1,4 +1,4 @@
-#include <sprites.h>
+#include "sprites.h"
 
 bool Sprites::Initialize(std::string path, SDL_Renderer* renderer) {
     spriteSheet = IMG_LoadTexture(renderer, path.c_str());

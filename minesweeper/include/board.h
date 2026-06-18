@@ -7,8 +7,8 @@
 #include <algorithm>
 #include <random>
 
-#include <cell.h>
-#include <constants.h>
+#include "cell.h"
+#include "constants.h"
 
 struct Board
 {

@@ -1,6 +1,7 @@
 #include <app_state.h>
 #include <constants.h>
 
+#include <SDL3_ttf/SDL_ttf.h>
 #include <ranges>
 
 using namespace std::ranges::views;
@@ -9,6 +10,11 @@ SDL_AppResult AppState::Init()
 {
     if (!SDL_CreateWindowAndRenderer("Minesweeper", WIDTH, HEIGHT, SDL_WINDOW_MAXIMIZED, &window, &renderer)) {
         SDL_Log("Couldn't create window and Renderer: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    if (!TTF_Init()) {
+        SDL_Log("Couldn't initialize SDL TTF: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 

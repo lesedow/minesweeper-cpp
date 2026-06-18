@@ -1,11 +1,11 @@
 #pragma once
 
-#include <cell.h>
-
 #include <SDL3/SDL.h>
 #include <array>
 
 constexpr SDL_Color MENU_CLEAR_COLOR{ 192, 192, 192, 255 };
+
+constexpr float DEFAULT_FONT_SIZE = 14.0f;
 
 constexpr int SPRITESHEET_COLUMNS = 8;
 constexpr int SPRITESHEET_ROWS = 2;

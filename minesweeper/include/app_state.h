@@ -4,8 +4,9 @@
 
 #include <format>
 
-#include <sprites.h>
-#include <board.h>
+#include "sprites.h"
+#include "board.h"
+#include "text_renderer.h"
 
 enum State
 {
@@ -19,7 +20,8 @@ struct AppState
     SDL_Window* window{ nullptr };
     SDL_Renderer* renderer{ nullptr };
 
-    State gameState{ State::MENU };
+    TextRenderer textRenderer{};
+    State gameState{ State::PLAYING };
     Sprites gameSprites{};
     Board gameBoard{};
 
