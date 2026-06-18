@@ -21,7 +21,7 @@ struct AppState
     SDL_Renderer* renderer{ nullptr };
 
     TextRenderer textRenderer{};
-    State gameState{ State::PLAYING };
+    State gameState{ State::MENU };
     Sprites gameSprites{};
     Board gameBoard{};
 

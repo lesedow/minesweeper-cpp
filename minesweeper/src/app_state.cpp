@@ -8,6 +8,16 @@ using namespace std::ranges::views;
 
 SDL_AppResult AppState::Init()
 {
+    std::string path = std::format(
+        "{}assets\\sprites\\minesweeper_sprites.png",
+        SDL_GetBasePath()
+    );
+
+    std::string fontPath = std::format(
+        "{}assets\\fonts\\Roboto_Condensed-Regular.ttf",
+        SDL_GetBasePath()
+    );
+
     if (!SDL_CreateWindowAndRenderer("Minesweeper", WIDTH, HEIGHT, SDL_WINDOW_MAXIMIZED, &window, &renderer)) {
         SDL_Log("Couldn't create window and Renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
@@ -18,10 +28,8 @@ SDL_AppResult AppState::Init()
         return SDL_APP_FAILURE;
     }
 
-    std::string path = std::format(
-        "{}assets\\sprites\\minesweeper_sprites.png",
-        SDL_GetBasePath()
-    );
+    if (!textRenderer.Initialize(renderer)) return SDL_APP_FAILURE;
+    if (!textRenderer.LoadFont(fontPath)) return SDL_APP_FAILURE;
 
     if (!gameSprites.Initialize(path, renderer)) {
         SDL_Log("Couldn't initialize game sprites!: %s", SDL_GetError());
@@ -29,7 +37,7 @@ SDL_AppResult AppState::Init()
     }
 
     SDL_SetTextureScaleMode(gameSprites.spriteSheet, SDL_SCALEMODE_NEAREST);
-    SDL_SetRenderScale(renderer, SCALE, SCALE);
+    // SDL_SetRenderScale(renderer, SCALE, SCALE);
 
     return SDL_APP_CONTINUE;
 }
@@ -90,6 +98,16 @@ void AppState::RenderMenu() {
     auto [red, green, blue, alpha] = MENU_CLEAR_COLOR;
     SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
     SDL_RenderClear(renderer);
+
+    TextData title;
+    title.text = "MINESWEEPER";
+    title.pointSize = 48;
+    title.horizontalAlignement = Alignement::CENTER;
+    title.verticalAlignement = Alignement::CENTER;
+    title.anchor = { 0, 0 };
+
+    textRenderer.RenderText(title);
+
     return;
 }
 
@@ -100,10 +118,10 @@ void AppState::RenderBoard()
         SDL_Point position = gameBoard.GetCellPositionByIndex(index);
 
         SDL_FRect destination = {
-            .x = static_cast<float>(position.x * CELL_SIZE),
-            .y = static_cast<float>(position.y * CELL_SIZE),
-            .w = CELL_SIZE,
-            .h = CELL_SIZE
+            .x = static_cast<float>(position.x * CELL_SIZE * SPRITE_SCALE),
+            .y = static_cast<float>(position.y * CELL_SIZE * SPRITE_SCALE),
+            .w = CELL_SIZE * SPRITE_SCALE,
+            .h = CELL_SIZE * SPRITE_SCALE
         };
 
         SDL_FRect sprite;

@@ -3,13 +3,14 @@
 #
 
 # Add source to this project's executable.
-add_executable (minesweeper WIN32 "minesweeper.cpp" "minesweeper.h")
+add_executable (minesweeper "minesweeper.cpp" "minesweeper.h")
 
 target_sources(minesweeper PRIVATE 
 	src/app_state.cpp
 	src/board.cpp
 	src/cell.cpp
 	src/sprites.cpp
+	src/text_renderer.cpp
 )
 
 target_include_directories (minesweeper PRIVATE include)

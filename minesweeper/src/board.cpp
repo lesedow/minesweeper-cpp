@@ -200,8 +200,8 @@ std::vector<int> Board::GetShuffledBoardIndexes(SDL_Point pressedCellPosition)
 
 int Board::GetCellIndexFromScreenCoordinates(float screenX, float screenY)
 {
-    int cellX = static_cast<int>(screenX / (CELL_SIZE * SCALE));
-    int cellY = static_cast<int>(screenY / (CELL_SIZE * SCALE));
+    int cellX = static_cast<int>(screenX / (CELL_SIZE * SPRITE_SCALE));
+    int cellY = static_cast<int>(screenY / (CELL_SIZE * SPRITE_SCALE));
     return cellX + cellY * BOARD_W;
 }
 
