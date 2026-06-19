@@ -21,7 +21,7 @@ bool TextRenderer::LoadFont(std::string path)
 	return true;
 }
 
-void TextRenderer::RenderText(TextData textData) {
+void TextRenderer::RenderText(TextData& textData) {
 	if (!TTF_SetFontSize(font, textData.pointSize)) {
 		SDL_Log("Failed to set font to specified size: %s", SDL_GetError());
 	};
@@ -33,12 +33,36 @@ void TextRenderer::RenderText(TextData textData) {
 
 	int textWidth, textHeight;
 	TTF_GetTextSize(ttfText, &textWidth, &textHeight);
+	
+	SDL_FPoint textActualPosition{ 0, 0 };
 
-	textData.anchor.x = WIDTH / 2 - textWidth / 2;
-	textData.anchor.y = HEIGHT / 4;
-	// SDL_Log("%f %f", textData.anchor.x, textData.anchor.y);
+	switch (textData.horizontalAlignement) {
+	case Alignement::RIGHT:
+		textActualPosition.x = textData.anchor.x + WIDTH - textWidth; //+ textData.padding.right - textData.padding.left;
+		break;
+	case Alignement::LEFT:
+		textActualPosition.x = textData.anchor.x;// + textData.padding.right - textData.padding.left;
+		break;
+	case Alignement::CENTER:
+		textActualPosition.x = textData.anchor.x + WIDTH / 2 - textWidth / 2;// +textData.padding.right - textData.padding.left;
+		break;
+	}
+
+	switch (textData.verticalAlignement) {
+	case Alignement::TOP:
+		textActualPosition.y = textData.anchor.y + textData.padding.top - textData.padding.bottom;
+		break;
+	case Alignement::BOTTOM:
+		textActualPosition.y = textData.anchor.y;// +textData.padding.right - textData.padding.left;
+		break;
+	case Alignement::CENTER:
+		textActualPosition.y = textData.anchor.y + textHeight / 2;// +textData.padding.bottom - textData.padding.top;
+		break;
+	}
+
+	textActualPosition.y += sin(SDL_GetTicks() / 1000.0f * 2.0f) * 25.0f;
 
 	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
 	TTF_SetTextColor(ttfText, 0, 0, 0, 255);
-	TTF_DrawRendererText(ttfText, textData.anchor.x, textData.anchor.y);
+	TTF_DrawRendererText(ttfText, textActualPosition.x, textActualPosition.y);
 }

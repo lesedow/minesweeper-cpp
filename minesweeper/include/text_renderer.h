@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
@@ -8,6 +10,7 @@
 enum Alignement
 {
 	TOP,
+	BOTTOM,
 	LEFT,
 	RIGHT,
 	CENTER
@@ -29,6 +32,7 @@ struct TextData
 	float pointSize{ DEFAULT_FONT_SIZE };
 	SDL_FPoint anchor{};
 	std::string text{};
+	bool bobbing{ false };
 };
 
 struct TextRenderer
@@ -38,5 +42,5 @@ struct TextRenderer
 	
 	bool Initialize(SDL_Renderer* renderer);
 	bool LoadFont(std::string path);
-	void RenderText(TextData textData);
+	void RenderText(TextData& textData);
 };

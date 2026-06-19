@@ -7,6 +7,7 @@
 #include "sprites.h"
 #include "board.h"
 #include "text_renderer.h"
+#include "menu.h"
 
 enum State
 {
@@ -25,8 +26,11 @@ struct AppState
     Sprites gameSprites{};
     Board gameBoard{};
 
+    Menu menu;
+ 
+    AppState();
+
     void RenderBoard();
-    void RenderMenu();
 
     void CleanUp();
     SDL_AppResult Init();

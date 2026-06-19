@@ -1,10 +1,13 @@
-#include <app_state.h>
-#include <constants.h>
+#include "app_state.h"
+#include "constants.h"
 
 #include <SDL3_ttf/SDL_ttf.h>
 #include <ranges>
+#include <cmath>
 
 using namespace std::ranges::views;
+
+AppState::AppState() :menu(&textRenderer){}
 
 SDL_AppResult AppState::Init()
 {
@@ -14,7 +17,7 @@ SDL_AppResult AppState::Init()
     );
 
     std::string fontPath = std::format(
-        "{}assets\\fonts\\Roboto_Condensed-Regular.ttf",
+        "{}assets\\fonts\\PixelifySans-Bold.ttf",
         SDL_GetBasePath()
     );
 
@@ -47,7 +50,7 @@ SDL_AppResult AppState::Iterate()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     switch (gameState) {
-        case State::MENU: RenderMenu(); break;
+        case State::MENU: menu.Render(renderer, gameSprites); break;
         case State::PLAYING: RenderBoard(); break;
         case State::OVER: break;
     }
@@ -92,31 +95,6 @@ void AppState::CleanUp()
     SDL_DestroyTexture(gameSprites.spriteSheet);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
-}
-
-void AppState::RenderMenu() {
-    for (int cell = 0; cell < BOARD_SIZE; cell++) {
-        SDL_Point position = gameBoard.GetCellPositionByIndex(cell);
-        SDL_FRect destination = {
-            .x = static_cast<float>(position.x * CELL_SIZE * SPRITE_SCALE),
-            .y = static_cast<float>(position.y * CELL_SIZE * SPRITE_SCALE),
-            .w = CELL_SIZE * SPRITE_SCALE,
-            .h = CELL_SIZE * SPRITE_SCALE
-        };
-        SDL_FRect sprite = gameSprites.GetSprite(CellVisual::HIDDEN_CELL);
-        SDL_RenderTexture(renderer, gameSprites.spriteSheet, &sprite, &destination);
-    }
-
-    TextData title;
-    title.text = "MINESWEEPER";
-    title.pointSize = 64;
-    title.horizontalAlignement = Alignement::CENTER;
-    title.verticalAlignement = Alignement::CENTER;
-    title.anchor = { 0, 0 };
-
-    textRenderer.RenderText(title);
-
-    return;
 }
 
 void AppState::RenderBoard()

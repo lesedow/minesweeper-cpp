@@ -1,9 +1,10 @@
-#include <board.h>
+#include "board.h"
+#include "random_mt.h"
 
 #include <ranges>
 
-using namespace std::ranges;
 using namespace std::ranges::views;
+using namespace std::ranges;
 
 Cell& Board::GetCell(int index)
 {
@@ -178,9 +179,6 @@ std::vector<int> Board::GetNeighboursOfCell(SDL_Point cellPosition)
 
 std::vector<int> Board::GetShuffledBoardIndexes(SDL_Point pressedCellPosition)
 {
-    static std::random_device randomDevice;
-    static std::mt19937 generator(randomDevice());
-
     std::vector<int> shuffledIndexes;
     std::vector<int> neighbours = GetNeighboursOfCell(pressedCellPosition);
 
@@ -194,7 +192,7 @@ std::vector<int> Board::GetShuffledBoardIndexes(SDL_Point pressedCellPosition)
         }
     }
 
-    std::shuffle(shuffledIndexes.begin(), shuffledIndexes.end(), generator);
+    std::shuffle(shuffledIndexes.begin(), shuffledIndexes.end(), random_mt::mt);
     return shuffledIndexes;
 }
 
