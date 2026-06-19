@@ -95,13 +95,21 @@ void AppState::CleanUp()
 }
 
 void AppState::RenderMenu() {
-    auto [red, green, blue, alpha] = MENU_CLEAR_COLOR;
-    SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
-    SDL_RenderClear(renderer);
+    for (int cell = 0; cell < BOARD_SIZE; cell++) {
+        SDL_Point position = gameBoard.GetCellPositionByIndex(cell);
+        SDL_FRect destination = {
+            .x = static_cast<float>(position.x * CELL_SIZE * SPRITE_SCALE),
+            .y = static_cast<float>(position.y * CELL_SIZE * SPRITE_SCALE),
+            .w = CELL_SIZE * SPRITE_SCALE,
+            .h = CELL_SIZE * SPRITE_SCALE
+        };
+        SDL_FRect sprite = gameSprites.GetSprite(CellVisual::HIDDEN_CELL);
+        SDL_RenderTexture(renderer, gameSprites.spriteSheet, &sprite, &destination);
+    }
 
     TextData title;
     title.text = "MINESWEEPER";
-    title.pointSize = 48;
+    title.pointSize = 64;
     title.horizontalAlignement = Alignement::CENTER;
     title.verticalAlignement = Alignement::CENTER;
     title.anchor = { 0, 0 };

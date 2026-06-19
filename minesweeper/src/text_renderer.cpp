@@ -39,5 +39,6 @@ void TextRenderer::RenderText(TextData textData) {
 	// SDL_Log("%f %f", textData.anchor.x, textData.anchor.y);
 
 	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
+	TTF_SetTextColor(ttfText, 0, 0, 0, 255);
 	TTF_DrawRendererText(ttfText, textData.anchor.x, textData.anchor.y);
 }
