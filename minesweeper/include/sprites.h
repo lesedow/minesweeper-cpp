@@ -1,17 +1,18 @@
 #pragma once
 
-#include <string>
-
-#include <constants.h>
-
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+#include <string>
+#include <array>
+#include <filesystem>
+
+#include "constants.h"
 
 struct Sprites
 {
     SDL_Texture* spriteSheet = nullptr;
-    std::array<SDL_FRect, SPRITES_SOURCES_SIZE> sprites = {};
+    std::array<SDL_FRect, constants::SPRITES_SOURCES_SIZE> sprites{};
 
     SDL_FRect& GetSprite(int index);
-    bool Initialize(std::string path, SDL_Renderer* renderer);
+    bool Initialize(const std::filesystem::path& path, SDL_Renderer* renderer);
 };

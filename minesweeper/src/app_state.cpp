@@ -4,6 +4,8 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <ranges>
 #include <cmath>
+#include <iostream>
+#include <filesystem>
 
 using namespace std::ranges::views;
 
@@ -11,17 +13,24 @@ AppState::AppState() :menu(&textRenderer){}
 
 SDL_AppResult AppState::Init()
 {
-    std::string path = std::format(
-        "{}assets\\sprites\\minesweeper_sprites.png",
-        SDL_GetBasePath()
-    );
+    //std::string path = std::format(
+    //    "{}assets\\sprites\\minesweeper_sprites.png",
+    //    SDL_GetBasePath()
+    //);
 
-    std::string fontPath = std::format(
-        "{}assets\\fonts\\PixelifySans-Bold.ttf",
-        SDL_GetBasePath()
-    );
+    //std::string fontPath = std::format(
+    //    "{}assets\\fonts\\PixelifySans-Bold.ttf",
+    //    SDL_GetBasePath()
+    //);
 
-    if (!SDL_CreateWindowAndRenderer("Minesweeper", WIDTH, HEIGHT, SDL_WINDOW_MAXIMIZED, &window, &renderer)) {
+    if (!SDL_CreateWindowAndRenderer(
+        "Minesweeper",
+        constants::WIDTH,
+        constants::HEIGHT,
+        SDL_WINDOW_MAXIMIZED,
+        &window,
+        &renderer
+    )) {
         SDL_Log("Couldn't create window and Renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
@@ -32,15 +41,15 @@ SDL_AppResult AppState::Init()
     }
 
     if (!textRenderer.Initialize(renderer)) return SDL_APP_FAILURE;
-    if (!textRenderer.LoadFont(fontPath)) return SDL_APP_FAILURE;
 
-    if (!gameSprites.Initialize(path, renderer)) {
+    if (!textRenderer.LoadFont(constants::ROBOTO_CONDENSED_PATH)) return SDL_APP_FAILURE;
+
+    if (!gameSprites.Initialize(constants::SPRITE_SHEET_PATH, renderer)) {
         SDL_Log("Couldn't initialize game sprites!: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
     SDL_SetTextureScaleMode(gameSprites.spriteSheet, SDL_SCALEMODE_NEAREST);
-    // SDL_SetRenderScale(renderer, SCALE, SCALE);
 
     return SDL_APP_CONTINUE;
 }
@@ -49,11 +58,13 @@ SDL_AppResult AppState::Iterate()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+
     switch (gameState) {
         case State::MENU: menu.Render(renderer, gameSprites); break;
         case State::PLAYING: RenderBoard(); break;
         case State::OVER: break;
     }
+
     SDL_RenderPresent(renderer);
 
     return SDL_APP_CONTINUE;
@@ -90,13 +101,6 @@ SDL_AppResult AppState::Event(SDL_Event* event)
     return SDL_APP_CONTINUE;
 }
 
-void AppState::CleanUp()
-{
-    SDL_DestroyTexture(gameSprites.spriteSheet);
-    SDL_DestroyWindow(window);
-    SDL_DestroyRenderer(renderer);
-}
-
 void AppState::RenderBoard()
 {
     for (const auto& [index, cell] : enumerate(gameBoard.board))
@@ -104,10 +108,10 @@ void AppState::RenderBoard()
         SDL_Point position = gameBoard.GetCellPositionByIndex(index);
 
         SDL_FRect destination = {
-            .x = static_cast<float>(position.x * CELL_SIZE * SPRITE_SCALE),
-            .y = static_cast<float>(position.y * CELL_SIZE * SPRITE_SCALE),
-            .w = CELL_SIZE * SPRITE_SCALE,
-            .h = CELL_SIZE * SPRITE_SCALE
+            .x = static_cast<float>(position.x * constants::CELL_SIZE * constants::SPRITE_SCALE),
+            .y = static_cast<float>(position.y * constants::CELL_SIZE * constants::SPRITE_SCALE),
+            .w = constants::CELL_SIZE * constants::SPRITE_SCALE,
+            .h = constants::CELL_SIZE * constants::SPRITE_SCALE
         };
 
         SDL_FRect sprite;
@@ -124,7 +128,7 @@ void AppState::RenderBoard()
                 sprite = gameSprites.GetSprite(CellVisual::BOMB);
             }
             else if (cell.adjacentNeighbours > 0) {
-                int visualIndex = NUMBERS_OFFSET + cell.adjacentNeighbours;
+                int visualIndex = constants::NUMBERS_OFFSET + cell.adjacentNeighbours;
                 sprite = gameSprites.GetSprite(visualIndex);
             }
             else {
@@ -140,4 +144,11 @@ void AppState::RenderBoard()
             &destination
         );
     }
+}
+
+void AppState::CleanUp()
+{
+    SDL_DestroyTexture(gameSprites.spriteSheet);
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
 }

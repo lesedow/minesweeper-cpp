@@ -11,9 +11,15 @@ bool TextRenderer::Initialize(SDL_Renderer* renderer)
 	return true;
 }
 
-bool TextRenderer::LoadFont(std::string path)
+TTF_Text* TextRenderer::CreateText(std::string_view text)
 {
-	if (!(font = TTF_OpenFont(path.c_str(), DEFAULT_FONT_SIZE))) {
+	TTF_Text* ttfText = TTF_CreateText(textEngine, font, std::string{ text }.c_str(), 0);
+	return ttfText;
+}
+
+bool TextRenderer::LoadFont(const std::filesystem::path& path)
+{
+	if (!(font = TTF_OpenFont(path.string().c_str(), constants::DEFAULT_FONT_SIZE))) {
 		SDL_Log("Couldn't load specified font: %s", SDL_GetError());
 		return false;
 	};
@@ -38,13 +44,13 @@ void TextRenderer::RenderText(TextData& textData) {
 
 	switch (textData.horizontalAlignement) {
 	case Alignement::RIGHT:
-		textActualPosition.x = textData.anchor.x + WIDTH - textWidth; //+ textData.padding.right - textData.padding.left;
+		textActualPosition.x = textData.anchor.x + constants::WIDTH - textWidth; //+ textData.padding.right - textData.padding.left;
 		break;
 	case Alignement::LEFT:
 		textActualPosition.x = textData.anchor.x;// + textData.padding.right - textData.padding.left;
 		break;
 	case Alignement::CENTER:
-		textActualPosition.x = textData.anchor.x + WIDTH / 2 - textWidth / 2;// +textData.padding.right - textData.padding.left;
+		textActualPosition.x = textData.anchor.x + constants::WIDTH / 2 - textWidth / 2;// +textData.padding.right - textData.padding.left;
 		break;
 	}
 
@@ -62,7 +68,7 @@ void TextRenderer::RenderText(TextData& textData) {
 
 	textActualPosition.y += sin(SDL_GetTicks() / 1000.0f * 2.0f) * 25.0f;
 
-	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
+	TTF_SetFontStyle(font, TTF_STYLE_ITALIC | TTF_STYLE_BOLD);
 	TTF_SetTextColor(ttfText, 0, 0, 0, 255);
 	TTF_DrawRendererText(ttfText, textActualPosition.x, textActualPosition.y);
 }

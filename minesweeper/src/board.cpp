@@ -1,5 +1,6 @@
 #include "board.h"
 #include "random_mt.h"
+#include "constants.h"
 
 #include <ranges>
 
@@ -14,8 +15,8 @@ Cell& Board::GetCell(int index)
 SDL_Point Board::GetCellPositionByIndex(int index)
 {
     return {
-        .x = index % BOARD_W,
-        .y = index / BOARD_W
+        .x = index % constants::BOARD_W,
+        .y = index / constants::BOARD_W
     };
 }
 
@@ -89,14 +90,14 @@ void Board::CountCells()
 
         SDL_Point position = GetCellPositionByIndex(index);
 
-        int left = std::clamp(position.x - 1, 0, BOARD_W - 1);
-        int top = std::clamp(position.y - 1, 0, BOARD_H - 1);
-        int down = std::clamp(position.y + 1, 0, BOARD_H - 1);
-        int right = std::clamp(position.x + 1, 0, BOARD_W - 1);
+        int left  =  std::clamp(position.x - 1, 0, constants::BOARD_W - 1);
+        int top   =  std::clamp(position.y - 1, 0, constants::BOARD_H - 1);
+        int down  =  std::clamp(position.y + 1, 0, constants::BOARD_H - 1);
+        int right =  std::clamp(position.x + 1, 0, constants::BOARD_W - 1);
 
         for (int nextCellY = top; nextCellY <= down; nextCellY++) {
             for (int nextCellX = left; nextCellX <= right; nextCellX++) {
-                int nextCellIndex = nextCellX + nextCellY * BOARD_W;
+                int nextCellIndex = nextCellX + nextCellY * constants::BOARD_W;
                 if (nextCellX == position.x &&
                     nextCellY == position.y) continue;
 
@@ -131,14 +132,14 @@ void Board::RecursiveFill(int pressedCellIndex)
 
     SDL_Point position = GetCellPositionByIndex(pressedCellIndex);
 
-    int left = std::clamp(position.x - 1, 0, BOARD_W - 1);
-    int top = std::clamp(position.y - 1, 0, BOARD_H - 1);
-    int down = std::clamp(position.y + 1, 0, BOARD_H - 1);
-    int right = std::clamp(position.x + 1, 0, BOARD_W - 1);
+    int left  =  std::clamp(position.x - 1, 0, constants::BOARD_W - 1);
+    int top   =  std::clamp(position.y - 1, 0, constants::BOARD_H - 1);
+    int down  =  std::clamp(position.y + 1, 0, constants::BOARD_H - 1);
+    int right =  std::clamp(position.x + 1, 0, constants::BOARD_W - 1);
 
     for (int nextCellY = top; nextCellY <= down; nextCellY++) {
         for (int nextCellX = left; nextCellX <= right; nextCellX++) {
-            int nextCellIndex = nextCellX + nextCellY * BOARD_W;
+            int nextCellIndex = nextCellX + nextCellY * constants::BOARD_W;
             if (nextCellX == position.x &&
                 nextCellY == position.y) continue;
 
@@ -158,17 +159,17 @@ std::vector<int> Board::GetNeighboursOfCell(SDL_Point cellPosition)
 {
     std::vector<int> neighbours;
 
-    int left = std::clamp(cellPosition.x - 1, 0, BOARD_W - 1);
-    int top = std::clamp(cellPosition.y - 1, 0, BOARD_H - 1);
-    int down = std::clamp(cellPosition.y + 1, 0, BOARD_H - 1);
-    int right = std::clamp(cellPosition.x + 1, 0, BOARD_W - 1);
+    int left  =   std::clamp(cellPosition.x - 1, 0, constants::BOARD_W - 1);
+    int top   =   std::clamp(cellPosition.y - 1, 0, constants::BOARD_H - 1);
+    int down  =   std::clamp(cellPosition.y + 1, 0, constants::BOARD_H - 1);
+    int right =   std::clamp(cellPosition.x + 1, 0, constants::BOARD_W - 1);
 
     for (int nextCellY = top; nextCellY <= down; nextCellY++) {
         for (int nextCellX = left; nextCellX <= right; nextCellX++) {
             if (nextCellX == cellPosition.x &&
                 nextCellY == cellPosition.y) continue;
 
-            int nextCellIndex = nextCellX + nextCellY * BOARD_W;
+            int nextCellIndex = nextCellX + nextCellY * constants::BOARD_W;
             neighbours.emplace_back(nextCellIndex);
         }
 
@@ -198,9 +199,9 @@ std::vector<int> Board::GetShuffledBoardIndexes(SDL_Point pressedCellPosition)
 
 int Board::GetCellIndexFromScreenCoordinates(float screenX, float screenY)
 {
-    int cellX = static_cast<int>(screenX / (CELL_SIZE * SPRITE_SCALE));
-    int cellY = static_cast<int>(screenY / (CELL_SIZE * SPRITE_SCALE));
-    return cellX + cellY * BOARD_W;
+    int cellX = static_cast<int>(screenX / (constants::CELL_SIZE * constants::SPRITE_SCALE));
+    int cellY = static_cast<int>(screenY / (constants::CELL_SIZE * constants::SPRITE_SCALE));
+    return cellX + cellY * constants::BOARD_W;
 }
 
 void Board::PlaceMines(int index)
@@ -209,7 +210,7 @@ void Board::PlaceMines(int index)
     SDL_Point position = GetCellPositionByIndex(index);
     std::vector<int> shuffledIndexes = GetShuffledBoardIndexes(position);
 
-    for (int index : iota_view(0, BOMB_COUNT)) {
+    for (int index : iota_view(0, constants::BOMB_COUNT)) {
         GetCell(shuffledIndexes[index]).ConvertToMine();
     }
 }

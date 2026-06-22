@@ -12,7 +12,7 @@
 
 struct Board
 {
-    std::array<Cell, BOARD_SIZE> board;
+    std::array<Cell, constants::BOARD_SIZE> board;
     bool isFirstClick = true;
     int flagsPlaced = 0;
     int revealedCells = 0;
