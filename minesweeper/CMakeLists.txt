@@ -10,7 +10,8 @@ target_sources(minesweeper PRIVATE
 	src/board.cpp
 	src/cell.cpp
 	src/sprites.cpp
-	src/text_renderer.cpp
+	src/text_system.cpp
+	src/menu.cpp
 )
 
 target_include_directories (minesweeper PRIVATE include)

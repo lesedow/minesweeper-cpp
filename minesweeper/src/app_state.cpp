@@ -9,20 +9,8 @@
 
 using namespace std::ranges::views;
 
-AppState::AppState() :menu(&textRenderer){}
-
 SDL_AppResult AppState::Init()
 {
-    //std::string path = std::format(
-    //    "{}assets\\sprites\\minesweeper_sprites.png",
-    //    SDL_GetBasePath()
-    //);
-
-    //std::string fontPath = std::format(
-    //    "{}assets\\fonts\\PixelifySans-Bold.ttf",
-    //    SDL_GetBasePath()
-    //);
-
     if (!SDL_CreateWindowAndRenderer(
         "Minesweeper",
         constants::WIDTH,
@@ -40,14 +28,16 @@ SDL_AppResult AppState::Init()
         return SDL_APP_FAILURE;
     }
 
-    if (!textRenderer.Initialize(renderer)) return SDL_APP_FAILURE;
+    if (!textSystem.Initialize(renderer)) return SDL_APP_FAILURE;
 
-    if (!textRenderer.LoadFont(constants::ROBOTO_CONDENSED_PATH)) return SDL_APP_FAILURE;
+    if (!textSystem.LoadFont(constants::ROBOTO_CONDENSED_PATH)) return SDL_APP_FAILURE;
 
     if (!gameSprites.Initialize(constants::SPRITE_SHEET_PATH, renderer)) {
         SDL_Log("Couldn't initialize game sprites!: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
+
+    if (!menu.Initialize(renderer, &textSystem)) return SDL_APP_FAILURE;
 
     SDL_SetTextureScaleMode(gameSprites.spriteSheet, SDL_SCALEMODE_NEAREST);
 
@@ -60,7 +50,7 @@ SDL_AppResult AppState::Iterate()
     SDL_RenderClear(renderer);
 
     switch (gameState) {
-        case State::MENU: menu.Render(renderer, gameSprites); break;
+        case State::MENU: menu.Render(gameSprites); break;
         case State::PLAYING: RenderBoard(); break;
         case State::OVER: break;
     }

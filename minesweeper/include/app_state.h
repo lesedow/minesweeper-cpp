@@ -6,7 +6,7 @@
 
 #include "sprites.h"
 #include "board.h"
-#include "text_renderer.h"
+#include "text_system.h"
 #include "menu.h"
 
 enum State
@@ -21,14 +21,12 @@ struct AppState
     SDL_Window* window{ nullptr };
     SDL_Renderer* renderer{ nullptr };
 
-    TextRenderer textRenderer{};
+    TextSystem textSystem{};
     State gameState{ State::MENU };
     Sprites gameSprites{};
     Board gameBoard{};
 
-    Menu menu;
- 
-    AppState();
+    Menu menu{};
 
     void RenderBoard();
 

@@ -8,6 +8,10 @@
 
 namespace constants
 {
+	// Colors
+	inline constexpr SDL_Color MENU_TITLE_PRIMARY = { 0xEC, 0xEC, 0xEC, 0xFF };
+	inline constexpr SDL_Color MENU_TITLE_SECONDARY = { 0xC0, 0xC0, 0xC0, 0xFF };
+
 	// Assets paths
 	inline constexpr std::string_view SPRITE_SHEET_LOCATION = "assets/sprites/minesweeper_sprites.png";
 	inline constexpr std::string_view ROBOTO_CONDENSED_LOCATION = "assets/fonts/Roboto_Condensed-Regular.ttf";
