@@ -33,7 +33,7 @@ struct Menu
 	TextData mediumDifficulty{};
 	TextData expertDifficulty{};
 
-	std::array<int, constants::BOARD_SIZE> backgroundTilesIndexes{};
+	std::array<int, constants::EXPERT_W * constants::EXPERT_H> backgroundTilesIndexes{};
 	
 	bool Initialize(SDL_Renderer* renderer, TextSystem* textSystem);
 	void Render(Sprites& sprites);

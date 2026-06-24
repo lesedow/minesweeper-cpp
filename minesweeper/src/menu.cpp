@@ -67,7 +67,7 @@ bool Menu::Initialize(SDL_Renderer* renderer, TextSystem* textSystem)
 	mediumDifficulty.text = textSystem->CreateText("MEDIUM");
 	expertDifficulty.text = textSystem->CreateText("EXPERT");
 	
-	for (int cell = 0; cell < constants::BOARD_SIZE; cell++) {
+	for (int cell = 0; cell < backgroundTilesIndexes.size(); cell++) {
 		int randomIndex = random_mt::get(0, constants::NUMBERS_OFFSET * 2);
 		backgroundTilesIndexes[cell] = randomIndex;
 	}
@@ -77,8 +77,8 @@ bool Menu::Initialize(SDL_Renderer* renderer, TextSystem* textSystem)
 
 void Menu::Render(Sprites& sprites) {
 
-	for (int y = 0; y < constants::BOARD_H; y++) {
-		for (int x = 0; x < constants::BOARD_W; x++) {
+	for (int y = 0; y < constants::EXPERT_H; y++) {
+		for (int x = 0; x < constants::EXPERT_W; x++) {
 			SDL_FRect destination = {
 				.x = static_cast<float>(x * constants::CELL_SIZE * constants::SPRITE_SCALE),
 				.y = static_cast<float>(y * constants::CELL_SIZE * constants::SPRITE_SCALE),
@@ -86,7 +86,7 @@ void Menu::Render(Sprites& sprites) {
 				.h = constants::CELL_SIZE * constants::SPRITE_SCALE
 			};
 
-			int index = backgroundTilesIndexes[x + y * constants::BOARD_W];
+			int index = backgroundTilesIndexes[x + y * constants::EXPERT_W];
 			SDL_FRect sprite = sprites.GetSprite(index);
 			SDL_RenderTexture(renderer, sprites.spriteSheet, &sprite, &destination);
 		}

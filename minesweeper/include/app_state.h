@@ -22,7 +22,7 @@ struct AppState
     SDL_Renderer* renderer{ nullptr };
 
     TextSystem textSystem{};
-    State gameState{ State::MENU };
+    State gameState{ State::PLAYING };
     Sprites gameSprites{};
     Board gameBoard{};
 
@@ -33,6 +33,8 @@ struct AppState
     void CleanUp();
     SDL_AppResult Init();
     SDL_AppResult Iterate();
+
+    bool ResizeWindowAndCenter(int width, int height);
 
     SDL_AppResult Event(SDL_Event* event);
     void HandleGameEvents(SDL_Event* event);

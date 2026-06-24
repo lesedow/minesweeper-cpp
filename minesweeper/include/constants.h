@@ -31,14 +31,25 @@ namespace constants
 	
 	inline constexpr std::size_t SPRITES_SOURCES_SIZE = SPRITESHEET_COLUMNS * SPRITESHEET_ROWS;
 
+
 	// Board default settings
-	inline constexpr int BOARD_W = 30;
-	inline constexpr int BOARD_H = 16;
-	inline constexpr int WIDTH = CELL_SIZE * SPRITE_SCALE * BOARD_W;
-	inline constexpr int HEIGHT = CELL_SIZE * SPRITE_SCALE * BOARD_H;
-	inline constexpr int BOMB_COUNT = 99;
 
-	inline constexpr std::size_t BOARD_SIZE = BOARD_W * BOARD_H;
+	inline constexpr int EASY_W = 9;
+	inline constexpr int EASY_H = 9;
+	
+	inline constexpr int MEDIUM_W = 16;
+	inline constexpr int MEDIUM_H = 16;
 
-	inline constexpr int NORMAL_CELLS_COUNT = BOARD_SIZE - BOMB_COUNT;
+	inline constexpr int EXPERT_W = 30;
+	inline constexpr int EXPERT_H = 16;
+
+	inline constexpr int EASY_BOMB_COUNT = 10;
+	inline constexpr int MEDIUM_BOMB_COUNT = 40;
+	inline constexpr int EXPERT_BOMB_COUNT = 99;
+
+	inline constexpr int EXCLUDED_CELLS_COUNT = 9;
+
+	// Window default
+	inline constexpr int WIDTH = CELL_SIZE * SPRITE_SCALE * EXPERT_W;
+	inline constexpr int HEIGHT = CELL_SIZE * SPRITE_SCALE * EXPERT_H;
 }

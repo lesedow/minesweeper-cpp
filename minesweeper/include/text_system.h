@@ -53,4 +53,5 @@ struct TextSystem
 	SDL_FPoint GetTransformedText(TextData& textData);
 	void RenderText(TextData& textData);
 	TTF_Text* CreateText(std::string text);
+	SDL_Point GetTextSize(TTF_Text* text);
 };

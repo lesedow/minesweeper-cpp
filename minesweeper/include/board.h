@@ -12,11 +12,17 @@
 
 struct Board
 {
-    std::array<Cell, constants::BOARD_SIZE> board;
-    bool isFirstClick = true;
-    int flagsPlaced = 0;
-    int revealedCells = 0;
+    std::vector<Cell> board;
+    bool isFirstClick{ true };
 
+    int flagsPlaced{};
+    int revealedCells{};
+    
+    int boardWidth{};
+    int boardHeight{};
+    int bombs{};
+
+    void InitializeBoard(int boardW, int boardH, int bombsCount);
     Cell& GetCell(int index);
     SDL_Point GetCellPositionByIndex(int index);
     void HandleLeftClickedCell(int pressedCellIndex);

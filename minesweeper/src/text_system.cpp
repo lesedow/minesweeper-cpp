@@ -30,6 +30,13 @@ bool TextSystem::LoadFont(const std::filesystem::path& path)
 	return true;
 }
 
+SDL_Point GetTextSize(TTF_Text* text)
+{
+	SDL_Point textSize{};
+	TTF_GetTextSize(text, &textSize.x, &textSize.y);
+	return textSize;
+}
+
 SDL_FPoint TextSystem::GetTransformedText(TextData& textData)
 {
 	SDL_FPoint calculatedPosition{};

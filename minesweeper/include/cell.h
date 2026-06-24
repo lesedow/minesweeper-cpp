@@ -18,9 +18,9 @@ enum CellVisual
 
 struct Cell
 {
-    CellState state = CellState::HIDDEN;
-    int adjacentNeighbours = 0;
-    bool isBomb = false;
+    CellState state{ CellState::HIDDEN };
+    int adjacentNeighbours{};
+    bool isBomb{ false };
 
     void Reveal();
     bool IsRevealableBomb();

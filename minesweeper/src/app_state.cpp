@@ -39,9 +39,48 @@ SDL_AppResult AppState::Init()
 
     if (!menu.Initialize(renderer, &textSystem)) return SDL_APP_FAILURE;
 
+    int bW = 16;
+    int bH = 16;
+    int bC = 40;
+
+    gameBoard.InitializeBoard(bW, bH, bC);
+
+    ResizeWindowAndCenter(bW, bH);
+
     SDL_SetTextureScaleMode(gameSprites.spriteSheet, SDL_SCALEMODE_NEAREST);
 
     return SDL_APP_CONTINUE;
+}
+
+bool AppState::ResizeWindowAndCenter(int width, int height)
+{
+    int resizedWidth = width * constants::CELL_SIZE * constants::SPRITE_SCALE;
+    int resizedHeight= height * constants::CELL_SIZE * constants::SPRITE_SCALE;
+
+    if (!SDL_SetWindowSize(window, resizedWidth, resizedHeight)) {
+        SDL_Log("Failed to resize window: %s", SDL_GetError());
+        return false;
+    };
+
+    SDL_DisplayID displayId = SDL_GetDisplayForWindow(window);
+    if (!displayId) {
+        SDL_Log("Failed to get display id: %s", SDL_GetError());
+        return false;
+    }
+
+    SDL_Rect displayBounds;
+    if (!SDL_GetDisplayBounds(displayId, &displayBounds)) {
+        SDL_Log("Failed to get display bounds: %s", SDL_GetError());
+        return false;
+    }
+
+    SDL_SetWindowPosition(
+        window,
+        displayBounds.w / 2 - resizedWidth / 2,
+        displayBounds.h / 2 - resizedHeight / 2
+    );
+    
+    return true;
 }
 
 SDL_AppResult AppState::Iterate()
@@ -76,6 +115,28 @@ void AppState::HandleGameEvents(SDL_Event* event)
 
 void AppState::HandleMenuEvents(SDL_Event* event)
 {
+    if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
+        float mouseX, mouseY;
+        SDL_MouseButtonFlags flag = SDL_GetMouseState(&mouseX, &mouseY);
+
+        int pressedCellIndex = gameBoard.GetCellIndexFromScreenCoordinates(mouseX, mouseY);
+
+        if (flag & SDL_BUTTON_LMASK) { 
+            if (menu.state == MenuState::MAIN) {
+                SDL_FPoint position = textSystem.GetTransformedText(menu.playButtonText);
+                SDL_Point size = textSystem.GetTextSize(menu.playButtonText.text);
+
+                SDL_FRect playButtonBounds{
+                    .x = position.x,
+                    .y = position.y,
+                    .w = position.x + size.x,
+                    .h = position.y + size.y,
+                };
+            }
+            
+        }
+
+    }
     return;
 }
 
