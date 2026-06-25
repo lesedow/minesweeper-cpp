@@ -1,8 +1,9 @@
 #include "cell.h"
 
-void Cell::Reveal()
+bool Cell::Reveal()
 {
-    state = CellState::SHOWN;
+    if (state == CellState::SHOWN) return false;
+    return (state = CellState::SHOWN);
 }
 
 bool Cell::IsRevealableBomb()

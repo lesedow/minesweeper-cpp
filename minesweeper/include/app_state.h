@@ -13,7 +13,6 @@ enum State
 {
     MENU,
     PLAYING,
-    OVER
 };
 
 struct AppState
@@ -22,7 +21,7 @@ struct AppState
     SDL_Renderer* renderer{ nullptr };
 
     TextSystem textSystem{};
-    State gameState{ State::PLAYING };
+    State gameState{ State::MENU };
     Sprites gameSprites{};
     Board gameBoard{};
 
@@ -38,5 +37,5 @@ struct AppState
 
     SDL_AppResult Event(SDL_Event* event);
     void HandleGameEvents(SDL_Event* event);
-    void HandleMenuEvents(SDL_Event* event);
+    SDL_AppResult HandleMenuEvents(SDL_Event* event);
 };

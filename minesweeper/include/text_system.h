@@ -52,6 +52,7 @@ struct TextSystem
 	bool LoadFont(const std::filesystem::path& path);
 	SDL_FPoint GetTransformedText(TextData& textData);
 	void RenderText(TextData& textData);
-	TTF_Text* CreateText(std::string text);
+	TTF_Text* CreateText(std::string text, float size, TTF_FontStyleFlags styleFlags);
 	SDL_Point GetTextSize(TTF_Text* text);
+	SDL_FRect GetTextRect(TextData& textData);
 };

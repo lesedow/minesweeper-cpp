@@ -10,6 +10,13 @@
 #include "cell.h"
 #include "constants.h"
 
+enum BoardState
+{
+    NONE,
+    WIN,
+    LOSE
+};
+
 struct Board
 {
     std::vector<Cell> board;
@@ -22,10 +29,12 @@ struct Board
     int boardHeight{};
     int bombs{};
 
+    void Reset();
     void InitializeBoard(int boardW, int boardH, int bombsCount);
     Cell& GetCell(int index);
     SDL_Point GetCellPositionByIndex(int index);
-    void HandleLeftClickedCell(int pressedCellIndex);
+
+    BoardState HandleLeftClickedCell(int pressedCellIndex);
     void HandleRightClickedCell(int pressedCellIndex);
     void RevealBombs();
     void RecursiveFill(int pressedCellIndex);

@@ -3,10 +3,16 @@
 #include "constants.h"
 
 #include <ranges>
-#include <algorithm>
 
 using namespace std::ranges::views;
 using namespace std::ranges;
+
+void Board::Reset()
+{
+    flagsPlaced = 0;
+    revealedCells = 0;
+    isFirstClick = true;
+}
 
 void Board::InitializeBoard(int boardW, int boardH, int bombsCount)
 {
@@ -15,8 +21,6 @@ void Board::InitializeBoard(int boardW, int boardH, int bombsCount)
 
     board = std::vector<Cell>(boardW * boardH);
     bombs = std::clamp(bombsCount, 0, boardW * boardH - constants::EXCLUDED_CELLS_COUNT); 
-    
-    std::fill(board.begin(), board.end(), Cell{});
 }
 
 Cell& Board::GetCell(int index)
@@ -32,7 +36,7 @@ SDL_Point Board::GetCellPositionByIndex(int index)
     };
 }
 
-void Board::HandleLeftClickedCell(int pressedCellIndex)
+BoardState Board::HandleLeftClickedCell(int pressedCellIndex)
 {
     if (isFirstClick) {
         isFirstClick = false;
@@ -40,7 +44,20 @@ void Board::HandleLeftClickedCell(int pressedCellIndex)
         CountCells();
     }
 
+    Cell& pressedCell = GetCell(pressedCellIndex);
+
+    if (pressedCell.isBomb) {
+        RevealBombs();
+        return BoardState::LOSE;
+    }
+
     RevealCell(pressedCellIndex);
+
+    if (revealedCells == boardWidth * boardHeight - bombs) {
+        return BoardState::WIN;
+    }
+
+    return BoardState::NONE;
 }
 
 void Board::HandleRightClickedCell(int pressedCellIndex)
@@ -84,14 +101,12 @@ void Board::RevealCell(int pressedCellIndex)
         for (auto index : revealableCellsIndexes) RevealCell(index);
     }
 
-    if (target.isBomb) RevealBombs();
-
     if (target.adjacentNeighbours == 0 && !target.isBomb) {
         RecursiveFill(pressedCellIndex);
         return;
     }
 
-    target.Reveal();
+    if (target.Reveal()) revealedCells++;
 }
 
 void Board::CountCells()
@@ -137,8 +152,7 @@ void Board::RecursiveFill(int pressedCellIndex)
     if (target.isBomb || target.state == CellState::SHOWN)
         return;
 
-    target.Reveal();
-    revealedCells++;
+    if (target.Reveal()) revealedCells++;
 
     if (target.adjacentNeighbours > 0) return;
 

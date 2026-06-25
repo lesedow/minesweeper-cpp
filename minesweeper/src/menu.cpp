@@ -59,13 +59,13 @@ bool Menu::Initialize(SDL_Renderer* renderer, TextSystem* textSystem)
 	expertDifficulty.primaryColor = constants::MENU_TITLE_PRIMARY;
 	expertDifficulty.styleFlags = TTF_STYLE_BOLD | TTF_STYLE_ITALIC;
 
-	menuTitle.text = textSystem->CreateText("MINESWEEPER");
-	playButtonText.text = textSystem->CreateText("PLAY");
-	exitButtonText.text = textSystem->CreateText("EXIT");
+	menuTitle.text = textSystem->CreateText("MINESWEEPER", menuTitle.pointSize, menuTitle.styleFlags);
+	playButtonText.text = textSystem->CreateText("PLAY", playButtonText.pointSize, playButtonText.styleFlags);
+	exitButtonText.text = textSystem->CreateText("EXIT", exitButtonText.pointSize, exitButtonText.styleFlags);
 
-	easyDifficulty.text = textSystem->CreateText("EASY");
-	mediumDifficulty.text = textSystem->CreateText("MEDIUM");
-	expertDifficulty.text = textSystem->CreateText("EXPERT");
+	easyDifficulty.text = textSystem->CreateText("EASY", easyDifficulty.pointSize, easyDifficulty.styleFlags);
+	mediumDifficulty.text = textSystem->CreateText("MEDIUM", mediumDifficulty.pointSize, mediumDifficulty.styleFlags);
+	expertDifficulty.text = textSystem->CreateText("EXPERT", expertDifficulty.pointSize, expertDifficulty.styleFlags);
 	
 	for (int cell = 0; cell < backgroundTilesIndexes.size(); cell++) {
 		int randomIndex = random_mt::get(0, constants::NUMBERS_OFFSET * 2);

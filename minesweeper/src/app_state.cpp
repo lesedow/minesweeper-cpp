@@ -39,14 +39,6 @@ SDL_AppResult AppState::Init()
 
     if (!menu.Initialize(renderer, &textSystem)) return SDL_APP_FAILURE;
 
-    int bW = 16;
-    int bH = 16;
-    int bC = 40;
-
-    gameBoard.InitializeBoard(bW, bH, bC);
-
-    ResizeWindowAndCenter(bW, bH);
-
     SDL_SetTextureScaleMode(gameSprites.spriteSheet, SDL_SCALEMODE_NEAREST);
 
     return SDL_APP_CONTINUE;
@@ -91,7 +83,6 @@ SDL_AppResult AppState::Iterate()
     switch (gameState) {
         case State::MENU: menu.Render(gameSprites); break;
         case State::PLAYING: RenderBoard(); break;
-        case State::OVER: break;
     }
 
     SDL_RenderPresent(renderer);
@@ -107,37 +98,90 @@ void AppState::HandleGameEvents(SDL_Event* event)
 
         int pressedCellIndex = gameBoard.GetCellIndexFromScreenCoordinates(mouseX, mouseY);
 
-        if (flag & SDL_BUTTON_LMASK) { gameBoard.HandleLeftClickedCell(pressedCellIndex); }
-        if (flag & SDL_BUTTON_RMASK) { gameBoard.HandleRightClickedCell(pressedCellIndex); }
+        if (flag & SDL_BUTTON_LMASK) {
+            std::string message{};
+            Uint8 messageType{};
+            
+            BoardState boardState = gameBoard.HandleLeftClickedCell(pressedCellIndex); 
+            
+            if (boardState == BoardState::WIN) {
+                message = "Ai avut noroc!!!";
+                messageType = SDL_MESSAGEBOX_INFORMATION;
+            }
+            else if (boardState == BoardState::LOSE) {
+                message = "Esti prost!!!";
+                messageType = SDL_MESSAGEBOX_ERROR;
+            }
+
+            if (boardState != BoardState::NONE) {
+                SDL_ShowSimpleMessageBox(messageType, message.c_str(), message.c_str(), window);
+                ResizeWindowAndCenter(constants::EXPERT_W, constants::EXPERT_H);
+
+                gameBoard.Reset();
+                gameState = State::MENU;
+                menu.state = MenuState::MAIN;
+            }
+
+        } else if (flag & SDL_BUTTON_RMASK) 
+            gameBoard.HandleRightClickedCell(pressedCellIndex);
 
     }
 }
 
-void AppState::HandleMenuEvents(SDL_Event* event)
+SDL_AppResult AppState::HandleMenuEvents(SDL_Event* event)
 {
     if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-        float mouseX, mouseY;
-        SDL_MouseButtonFlags flag = SDL_GetMouseState(&mouseX, &mouseY);
-
-        int pressedCellIndex = gameBoard.GetCellIndexFromScreenCoordinates(mouseX, mouseY);
+        SDL_FPoint mousePosition{};
+        SDL_MouseButtonFlags flag = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
 
         if (flag & SDL_BUTTON_LMASK) { 
             if (menu.state == MenuState::MAIN) {
-                SDL_FPoint position = textSystem.GetTransformedText(menu.playButtonText);
-                SDL_Point size = textSystem.GetTextSize(menu.playButtonText.text);
+                SDL_FRect playButtonRect = textSystem.GetTextRect(menu.playButtonText);
+                SDL_FRect exitButtonRect = textSystem.GetTextRect(menu.exitButtonText);
 
-                SDL_FRect playButtonBounds{
-                    .x = position.x,
-                    .y = position.y,
-                    .w = position.x + size.x,
-                    .h = position.y + size.y,
-                };
+                bool isInsidePlayButton = SDL_PointInRectFloat(&mousePosition, &playButtonRect);
+                bool isInsideExitButton = SDL_PointInRectFloat(&mousePosition, &exitButtonRect);
+                
+                if (isInsidePlayButton) {
+                    menu.state = MenuState::DIFFICULTY;
+                }
+                else if (isInsideExitButton) {
+                    return SDL_APP_SUCCESS;
+                }
+            }
+            else if (menu.state == MenuState::DIFFICULTY) {
+                SDL_FRect easyButtonRect = textSystem.GetTextRect(menu.easyDifficulty);
+                SDL_FRect mediumButtonRect = textSystem.GetTextRect(menu.mediumDifficulty);
+                SDL_FRect expertButtonRect = textSystem.GetTextRect(menu.expertDifficulty);
+
+                bool isInsideEasyButton = SDL_PointInRectFloat(&mousePosition, &easyButtonRect);
+                bool isInsideMediumButton = SDL_PointInRectFloat(&mousePosition, &mediumButtonRect);
+                bool isInsideExpertButton = SDL_PointInRectFloat(&mousePosition, &expertButtonRect);
+                
+                if (isInsideEasyButton ||
+                    isInsideMediumButton ||
+                    isInsideExpertButton) gameState = State::PLAYING;
+                    
+                if (isInsideEasyButton) {
+                    gameBoard.InitializeBoard(constants::EASY_W, constants::EASY_H, constants::EASY_BOMB_COUNT);
+                    ResizeWindowAndCenter(constants::EASY_W, constants::EASY_H); 
+                }
+                else if (isInsideMediumButton) {
+                    gameBoard.InitializeBoard(constants::MEDIUM_W, constants::MEDIUM_H, constants::MEDIUM_BOMB_COUNT);
+                    ResizeWindowAndCenter(constants::MEDIUM_W, constants::MEDIUM_H);
+                }
+                else if (isInsideExpertButton) {
+                    gameBoard.InitializeBoard(constants::EXPERT_W, constants::EXPERT_H, constants::EXPERT_BOMB_COUNT);
+                    ResizeWindowAndCenter(constants::EXPERT_W, constants::EXPERT_H);
+                }
+
             }
             
         }
 
     }
-    return;
+    
+    return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult AppState::Event(SDL_Event* event)
@@ -146,7 +190,7 @@ SDL_AppResult AppState::Event(SDL_Event* event)
         return SDL_APP_SUCCESS;
     }
     
-    if (gameState == State::MENU) HandleMenuEvents(event);
+    if (gameState == State::MENU) return HandleMenuEvents(event);
     else if (gameState == State::PLAYING) HandleGameEvents(event);
 
     return SDL_APP_CONTINUE;
@@ -199,6 +243,13 @@ void AppState::RenderBoard()
 
 void AppState::CleanUp()
 {
+    TTF_DestroyText(menu.menuTitle.text);
+    TTF_DestroyText(menu.playButtonText.text);
+    TTF_DestroyText(menu.exitButtonText.text);
+    TTF_DestroyText(menu.easyDifficulty.text);
+    TTF_DestroyText(menu.mediumDifficulty.text);
+    TTF_DestroyText(menu.expertDifficulty.text);
+
     SDL_DestroyTexture(gameSprites.spriteSheet);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);

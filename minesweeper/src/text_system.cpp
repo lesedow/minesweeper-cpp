@@ -11,8 +11,11 @@ bool TextSystem::Initialize(SDL_Renderer* renderer)
 	return true;
 }
 
-TTF_Text* TextSystem::CreateText(std::string text)
+TTF_Text* TextSystem::CreateText(std::string text, float size, TTF_FontStyleFlags styleFlags)
 {
+	TTF_SetFontStyle(font, styleFlags);
+	TTF_SetFontSize(font, size);
+
 	TTF_Text* ttfText = TTF_CreateText(textEngine, font, text.c_str(), 0);
 	if (!ttfText) {
 		SDL_Log("Failed to create text: %s", SDL_GetError());
@@ -30,20 +33,41 @@ bool TextSystem::LoadFont(const std::filesystem::path& path)
 	return true;
 }
 
-SDL_Point GetTextSize(TTF_Text* text)
+SDL_Point TextSystem::GetTextSize(TTF_Text* text)
 {
 	SDL_Point textSize{};
 	TTF_GetTextSize(text, &textSize.x, &textSize.y);
 	return textSize;
 }
 
+SDL_FRect TextSystem::GetTextRect(TextData& textData)
+{
+	SDL_Point textSize = GetTextSize(textData.text);
+	SDL_FPoint textPosition = GetTransformedText(textData);
+
+	return {
+		.x = textPosition.x,
+		.y = textPosition.y,
+		.w = static_cast<float>(textSize.x),
+		.h = static_cast<float>(textSize.y)
+	};
+}
+
 SDL_FPoint TextSystem::GetTransformedText(TextData& textData)
 {
 	SDL_FPoint calculatedPosition{};
 
-	int textWidth, textHeight;
+	if (!TTF_SetFontSize(font, textData.pointSize)) {
+		SDL_Log("Failed to set font to specified size: %s", SDL_GetError());
+	};
+	TTF_SetFontStyle(font, textData.styleFlags);
+
+	int textWidth{};
+	int textHeight{};
+
 	if (!TTF_GetTextSize(textData.text, &textWidth, &textHeight)) {
 		SDL_Log("Failed to get text size: %s", SDL_GetError());
+		return calculatedPosition;
 	}
 
 	switch (textData.horizontalAlignement) {
@@ -92,11 +116,6 @@ void TextSystem::RenderText(TextData& textData) {
 	float ticks = SDL_GetTicks() / 1000.0f;
 	const float speed = 2.0f;
 	const float amplitude = 15.0f;
-
-	if (!TTF_SetFontSize(font, textData.pointSize)) {
-		SDL_Log("Failed to set font to specified size: %s", SDL_GetError());
-	};
-	TTF_SetFontStyle(font, textData.styleFlags);
 
 	SDL_FPoint calculatedPosition = GetTransformedText(textData);
 	if (textData.bobbing) {

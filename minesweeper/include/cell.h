@@ -22,7 +22,7 @@ struct Cell
     int adjacentNeighbours{};
     bool isBomb{ false };
 
-    void Reveal();
+    bool Reveal();
     bool IsRevealableBomb();
     void ConvertToMine();
     bool ToggleFlag();
